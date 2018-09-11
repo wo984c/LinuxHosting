@@ -603,6 +603,27 @@ Lets create a free certificate from letsencrypt.org.
     # sudo chgrp -R www-data apps/
     ```
 
+1. Data Base Setup
+
+_Change user to postgres, create the data base, and db user_
+
+
+    ```
+    # sudo su - postgres
+    # cd /vagrant/itemCatalog
+    # psql
+    postgres=# \i dbinit.sql;
+    postgres=# \q;
+    postgres@vagrant:~$ exit
+    ```
+
+_Setup the db schema_ 
+
+    ```
+    # python create_db_schema.py 
+    ```
+
+
 1. Restart Apache Web Server
 
     ```
