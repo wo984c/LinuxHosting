@@ -13,40 +13,40 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 
     a. Select the instance location (region)
 
-    a. Pick Linux/Unix platform
+    b. Pick Linux/Unix platform
 
-    a. Select OS Only on the blueprint and then Ubuntu 16.04LTS
+    c. Select OS Only on the blueprint and then Ubuntu 16.04LTS
 
-    a. Download the default private key from the SSH Key pair manager option so you 
+    d. Download the default private key from the SSH Key pair manager option so you 
     can connect to your Lightsail instance
 
-    a. Choose the lowest plan to get free-tier access
+    e. Choose the lowest plan to get free-tier access
 
-    a. Finally, name your instance and click create.
+    f. Finally, name your instance and click create.
 
 ### _SSH into your server_
 
 1. Copy the private key downloaded on step 2.d. of the previous section to the .ssh/ directory under the default user's home directory and modify default permissions
 
-a. Change to user's home directory 
+    a. Change to user's home directory 
 
     ```
     # cd ~ 
     ```
 
-a. Check if .ssh/ directory exists 
+    b. Check if .ssh/ directory exists 
 
     ``` 
     # ls -la 
     ```
 
-a. If .ssh/ does not exists, create it 
+    c. If .ssh/ does not exists, create it 
 
     ``` 
     # mkdir .ssh 
     ```
 
-a. Copy the private key file to .ssh/ 
+    d. Copy the private key file to .ssh/ 
 
     ```
     # cp <private_key_file> ~/<user_name>/.ssh/aws-key
@@ -59,15 +59,15 @@ a. Copy the private key file to .ssh/
     
 1. SSH Access to your lightsail 
 
-a. Find the public IP Address of the instance
+    a. Find the public IP Address of the instance
 
-a. Connect to the instance using the default username 
+    b. Connect to the instance using the default username 
 
     ``` 
     # ssh ubuntu@<ip_address> -i .ssh/aws-key 
     ```
 
-a. Answer yes to _Are you sure you want to continue connecting (yes/no)?_
+    c. Answer yes to _Are you sure you want to continue connecting (yes/no)?_
 
 1. The ssh access to the lightsail instance is restricted to keypair authentication by default. However, it is recommend to double-check
 
