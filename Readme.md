@@ -9,14 +9,20 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 
 1. Login to _[Amazon Lightsail](https://lightsail.aws.amazon.com/)_. If you don't have an Amazon Web Services account, create one
 
-1. Create an instance (server running in amazon data centers)
+1. Create an instance
 
-a. Select the instance location (region)
-a. Pick Linux/Unix platform
-a. Select OS Only on the blueprint and then Ubuntu 16.04LTS
-a. Download the default private key from the SSH Key pair manager option so you can connect to your Lightsail instance
-a. Choose the lowest plan to get free-tier access
-a. Finally, name your instance and click create.
+    a. Select the instance location (region)
+
+    a. Pick Linux/Unix platform
+
+    a. Select OS Only on the blueprint and then Ubuntu 16.04LTS
+
+    a. Download the default private key from the SSH Key pair manager option so you 
+    can connect to your Lightsail instance
+
+    a. Choose the lowest plan to get free-tier access
+
+    a. Finally, name your instance and click create.
 
 ### _SSH into your server_
 
