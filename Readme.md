@@ -520,22 +520,6 @@ Lets create a free certificate from letsencrypt.org.
             Require all granted
         </Directory>
 
-        <Directory /var/www/html/apps/itemCatalog/templates>
-            Require all granted
-        </Directory>
-
-        <Directory /var/www/html/apps/itemCatalog/handlers>
-            Require all granted
-        </Directory>
-
-        <Directory /var/www/html/apps/itemCatalog/models>
-            Require all granted
-        </Directory>
-     
-        <Directory /var/www/html/apps/itemCatalog/helpers>
-            Require all granted
-        </Directory>
-
         ErrorLog ${APACHE_LOG_DIR}/error.log
         LogLevel warn
         CustomLog ${APACHE_LOG_DIR}/access.log combined
@@ -614,7 +598,7 @@ Lets create a free certificate from letsencrypt.org.
     # psql
     
     postgres=# \i dbinit.sql;
-    postgres=# \q;
+    postgres=# \q
     
     # exit
     ```
@@ -622,7 +606,9 @@ Lets create a free certificate from letsencrypt.org.
     Setup the db schema 
 
     ```
-    # python create_db_schema.py 
+    # cd /var/www/html/apps/itemCatalog/
+
+    # venv/bin/python create_db_schema.py 
     ```
 
 
@@ -691,3 +677,14 @@ Lets create a free certificate from letsencrypt.org.
     ```
 
 1. Finally, share the private key located in the client's ~/grader_keys/ dir with the Udacity's grader.
+
+## References
+
+* Amazon Lightsail - https://aws.amazon.com/lightsail/
+* Uncomplicated Firewall - https://help.ubuntu.com/community/UFW
+
+mod_wsgi
+
+* https://modwsgi.readthedocs.io/en/develop/user-guides.html
+* http://flask.pocoo.org/docs/1.0/deploying/mod_wsgi/
+
