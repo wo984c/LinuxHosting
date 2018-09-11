@@ -2,6 +2,37 @@
 
 In this tutorial we're going to configure a baseline installation of Ubuntu server to host web applications on Amazon Lightsail. It is a  step by step on how to create your instance, configure the web server, and finally host a flask application securely with Transport Layer Security.
 
+## Required Software Packages
+
+* NTP
+* PostgreSQL
+* Git
+* Apache2
+* mod_wsgi
+* software-properties-common
+* python-certbot-apache
+* python-pip
+* VirtualEnv
+* Finger
+
+## Required Python Modules
+
+* Flask
+* flask-sqlalchemy
+* oauth2client psycopg2-binary
+* Flask-HTTPAuth
+* html5lib
+* urllib3
+* requests
+* redis
+* pyparsing
+* passlib
+* packaging
+
+## Instance IP Address - for grader use only
+
+* 18.220.131.26
+
 
 ## Procedure
 
