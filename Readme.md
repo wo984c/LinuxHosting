@@ -3,7 +3,7 @@
 In this tutorial we're going to configure a baseline installation of Ubuntu server to host web applications on Amazon Lightsail. It is a  step by step on how to create your instance, configure the web server, and finally host a flask application securely with Transport Layer Security.
 
 
-## Geting Started
+## Procedure
 
 ### _Create the Ubuntu Linux server instance on Amazon Lightsail_
 
@@ -40,7 +40,7 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
     # ls -la 
     ```
 
-    c. If .ssh/ does not exists, create it 
+    c. If .ssh/ does not exists, else continue to step d 
 
     ``` 
     # mkdir .ssh 
@@ -496,7 +496,7 @@ Lets create a free certificate from letsencrypt.org.
     application.secret_key = '23d34f@34#$%^fgty***2'
     ```
 
-1. Edit the ssl version of the itemCatalog configuration in /etc/apache2/sites-available/, remember to use sudo
+1. Edit the ssl version of the itemCatalog site configuration file in /etc/apache2/sites-available/, remember to use sudo
 
     ```
     <IfModule mod_ssl.c>
@@ -593,6 +593,7 @@ Lets create a free certificate from letsencrypt.org.
 
 
     ```
+    # sudo service apache2 stop
     # sudo su - postgres
     # cd /var/www/html/apps/itemCatalog
     # psql
@@ -612,10 +613,10 @@ Lets create a free certificate from letsencrypt.org.
     ```
 
 
-1. Restart Apache Web Server
+1. Start the Apache Web Server
 
     ```
-    # sudo service apache2 restart
+    # sudo service apache2 start
     ```
 
 ### _Give grader SSH Access_
@@ -678,10 +679,12 @@ Lets create a free certificate from letsencrypt.org.
 
 1. Finally, share the private key located in the client's ~/grader_keys/ dir with the Udacity's grader.
 
+
 ## References
 
 * Amazon Lightsail - https://aws.amazon.com/lightsail/
 * Uncomplicated Firewall - https://help.ubuntu.com/community/UFW
+* Certificate Authority - https://letsencrypt.org/docs/
 
 mod_wsgi
 
