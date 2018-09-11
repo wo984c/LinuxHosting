@@ -313,7 +313,7 @@ Enforce the least privelege principle by opening only the required ports.
 1. To secure apache a little bit more, edit /etc/apache2/conf-enabled/security.conf with the following instructions to prevent
 
     a. Giving the OS information ```ServerSignature Off```
-    
+
     b. Direct access to .sql, .git, .json, .md files
 
     ```
@@ -549,7 +549,7 @@ Lets create a free certificate from letsencrypt.org.
 
 1. Required Modifications to original code
 
-a. Oauth parameters in ``` handlers/online_oauth.py ```
+    a. Oauth parameters in ``` handlers/online_oauth.py ```
 
     ```
     CLIENT_ID = json.loads(
@@ -564,28 +564,32 @@ a. Oauth parameters in ``` handlers/online_oauth.py ```
     ```
     app_secret = json.loads(open('/var/www/html/apps/itemCatalog/fb_client_secrets.json', 'r').read())['web']['app_secret']
     ```
-a. ``` handlers/category.py ```
+
+    b. ``` handlers/category.py ```
  
     ```
     from ..models.category import *
     from ..models.item import *
     from ..helpers import *
     ```
-a. ``` handlers/endpoint.py ```
+
+    c. ``` handlers/endpoint.py ```
 
     ```
     from ..models.item import Item
     from ..models.category import Category
     from ..helpers import *
     ```
-a. ``` handlers/item.py ```
+
+    d. ``` handlers/item.py ```
 
     ```
     from ..models.category import *
     from ..models.item import *
     from ..helpers import *
     ```
-a. ``` __init__.py ```
+
+    e. ``` __init__.py ```
  
     ```
     from .helpers import *
