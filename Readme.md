@@ -11,30 +11,37 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 
 1. Create an instance (server running in amazon data centers)
 
-    a. Select the instance location (region)
-    b. Pick Linux/Unix platform
-    c. Select OS Only on the blueprint and then Ubuntu 16.04LTS
-    d. Download the default private key from the SSH Key pair manager option so you can connect to your Lightsail instance
-    e. Choose the lowest plan to get free-tier access
-    f. Finally, name your instance and click create.
+a. Select the instance location (region)
+a. Pick Linux/Unix platform
+a. Select OS Only on the blueprint and then Ubuntu 16.04LTS
+a. Download the default private key from the SSH Key pair manager option so you can connect to your Lightsail instance
+a. Choose the lowest plan to get free-tier access
+a. Finally, name your instance and click create.
 
 ### _SSH into your server_
 
 1. Copy the private key downloaded on step 2.d. of the previous section to the .ssh/ directory under the default user's home directory and modify default permissions
 
-    a. Change to user's home directory 
+a. Change to user's home directory 
+
     ```
     # cd ~ 
     ```
-    b. Check if .ssh/ directory exists 
+
+a. Check if .ssh/ directory exists 
+
     ``` 
     # ls -la 
     ```
-    c. If .ssh/ does not exists, create it 
+
+a. If .ssh/ does not exists, create it 
+
     ``` 
     # mkdir .ssh 
     ```
-    d. Copy the private key file to .ssh/ 
+
+a. Copy the private key file to .ssh/ 
+
     ```
     # cp <private_key_file> ~/<user_name>/.ssh/aws-key
     ```
@@ -46,27 +53,36 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
     
 1. SSH Access to your lightsail 
 
-    a. Find the public IP Address of the instance
-    b. Connect to the instance using the default username 
+a. Find the public IP Address of the instance
+
+a. Connect to the instance using the default username 
+
     ``` 
     # ssh ubuntu@<ip_address> -i .ssh/aws-key 
     ```
-    c. Answer yes to _Are you sure you want to continue connecting (yes/no)?_
 
-1. The ssh access to the lightsail instance is restricted to keypair authentication by default. However, it is recommend to double-check.
+a. Answer yes to _Are you sure you want to continue connecting (yes/no)?_
+
+1. The ssh access to the lightsail instance is restricted to keypair authentication by default. However, it is recommend to double-check
+
     ```  
     # more /etc/ssh/sshd_config |grep 'PasswordAuthentication '
     ```
 
-    If the output is different than ```PasswordAuthentication no ```, then edit /etc/ssh/sshd_config and change it and restart the sshd daemon ``` # service sshd restart ```.
+    If the output is different than ```PasswordAuthentication no ```, 
+    edit /etc/ssh/sshd_config and change it and restart the sshd daemon 
+    ``` # service sshd restart ```.
 
 ### _System updates and upgrade_
 
 1. Update the package source list
+
     ```
     # sudo apt-get update
     ```
+
 1. Upgrade your system
+
     ```
     # sudo apt-get upgrade
     ```
@@ -76,33 +92,39 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 Enforce the least privelege principle by opening only the required ports.
 
 1. Check the status of the firewall
+
     ```
     # sudo ufw status
     ```
 
 1. Start the configuration blocking all incoming connections
+
     ```
     # sudo ufw default deny incoming
     ```
 
 1. Allow the server's outgoing connections
+
     ```
     # sudo ufw default allow outgoing
     ```
 
 1. Allow SSH connections on ports 22 and 2200
+
     ```
     # sudo ufw allow 22/tcp
     # sudo ufw allow 2200/tcp
     ```
 
 1. Allow connections to http(port 80) and https(port 443)
+
     ```
     # sudo ufw allow www
     # sudo ufw allow https
     ```
 
 1. Allow NTP traffic
+
     ```
     # sudo ufw allow 123/udp
     ```
@@ -110,6 +132,7 @@ Enforce the least privelege principle by opening only the required ports.
 1. On your lightsail instance page go to manage, networking, scroll down to firewall, and make sure that NTP(123/udp), SSH(22/tcp), custom ssh(2200/tcp), HTTP(80/tcp), and HTTPS(443/tcp) are allowed
     
 1. To check the rules added before enabling ufw run
+
     ```
     # sudo ufw show added
     ```
@@ -117,6 +140,7 @@ Enforce the least privelege principle by opening only the required ports.
 1. Enable the firewall
 
     *Note: Make sure that SSH rule has been configure to allow incoming connections before enabling ufw.*
+
     ```
     # sudo ufw enable
     ```
@@ -126,6 +150,7 @@ Enforce the least privelege principle by opening only the required ports.
 1. Edit /etc/ssh/sshd_config with nano or vi
 
 1. Duplicate the Port paramemter and change the port of the second one to 2200
+
     ``` 
     Port 22
     Port 2200
@@ -158,6 +183,7 @@ Enforce the least privelege principle by opening only the required ports.
     ```
 
 1. On your lightsail instance page go to manage, networking, scroll down to firewall, edit rules, click on the X next to port 22, and save.
+
 
 ### _Configure Time Zone and NTP Synchronization_
 
@@ -255,9 +281,12 @@ Enforce the least privelege principle by opening only the required ports.
 
 1. Test the WSGI module
 
-    a. Edit ```/etc/apache2/sites-enabled/000-default.conf```
-    b. Add ```WSGIScriptAlias / /var/www/html/myapp.wsgi``` right before the closing of ```</VirtualHost>```
-    c. Create /var/www/html/myapp.wsgi and add this
+a. Edit ```/etc/apache2/sites-enabled/000-default.conf```
+    
+a. Add ```WSGIScriptAlias / /var/www/html/myapp.wsgi``` right before the closing of ```</VirtualHost>```
+
+a. Create /var/www/html/myapp.wsgi and add this
+
     ```
     def application(environ, start_response):
         status = '200 OK'
@@ -266,11 +295,14 @@ Enforce the least privelege principle by opening only the required ports.
         start_response(status, response_headers)
         return [output]
     ```
-    d. Restart the web server
+
+a. Restart the web server
+
     ```
     # sudo service apache2 restart
     ```
-    e. Browse to ```http://<public_IP>``` and you will see "It Works!".
+
+a. Browse to ```http://<public_IP>``` and you will see "It Works!".
 
 1. To secure apache a little bit more, edit /etc/apache2/conf-enabled/security.conf with the following instructions to prevent
 
@@ -331,6 +363,7 @@ Enforce the least privelege principle by opening only the required ports.
     ```
 
 1. Restart Apache
+
     ```
     # sudo service apache2 restart
     ```
@@ -509,7 +542,8 @@ Lets create a free certificate from letsencrypt.org.
 
 1. Required Modifications to original code
 
-    a. Oauth parameters in ``` handlers/online_oauth.py ```
+a. Oauth parameters in ``` handlers/online_oauth.py ```
+
     ```
     CLIENT_ID = json.loads(
     open('/var/www/html/apps/itemCatalog/client_secrets.json','r').read())['web']['client_id']
@@ -523,25 +557,29 @@ Lets create a free certificate from letsencrypt.org.
     ```
     app_secret = json.loads(open('/var/www/html/apps/itemCatalog/fb_client_secrets.json', 'r').read())['web']['app_secret']
     ```
-    b. ``` handlers/category.py ```
+a. ``` handlers/category.py ```
+ 
     ```
     from ..models.category import *
     from ..models.item import *
     from ..helpers import *
     ```
-    c. ``` handlers/endpoint.py ```
+a. ``` handlers/endpoint.py ```
+
     ```
     from ..models.item import Item
     from ..models.category import Category
     from ..helpers import *
     ```
-    d. ``` handlers/item.py ```
+a. ``` handlers/item.py ```
+
     ```
     from ..models.category import *
     from ..models.item import *
     from ..helpers import *
     ```
-    e. ``` __init__.py ```
+a. ``` __init__.py ```
+ 
     ```
     from .helpers import *
     ```
