@@ -287,11 +287,11 @@ Enforce the least privelege principle by opening only the required ports.
 
 1. Test the WSGI module
 
-a. Edit ```/etc/apache2/sites-enabled/000-default.conf```
+    a. Edit ```/etc/apache2/sites-enabled/000-default.conf```
     
-a. Add ```WSGIScriptAlias / /var/www/html/myapp.wsgi``` right before the closing of ```</VirtualHost>```
+    b. Add ```WSGIScriptAlias / /var/www/html/myapp.wsgi``` right before the closing of ```</VirtualHost>```
 
-a. Create /var/www/html/myapp.wsgi and add this
+    c. Create /var/www/html/myapp.wsgi and add this
 
     ```
     def application(environ, start_response):
@@ -302,17 +302,18 @@ a. Create /var/www/html/myapp.wsgi and add this
         return [output]
     ```
 
-a. Restart the web server
+    d. Restart the web server
 
     ```
     # sudo service apache2 restart
     ```
 
-a. Browse to ```http://<public_IP>``` and you will see "It Works!".
+    e. Browse to ```http://<public_IP>``` and you will see "It Works!".
 
 1. To secure apache a little bit more, edit /etc/apache2/conf-enabled/security.conf with the following instructions to prevent
 
     a. Giving the OS information ```ServerSignature Off```
+    
     b. Direct access to .sql, .git, .json, .md files
 
     ```
