@@ -8,7 +8,9 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 ### _Create the Ubuntu Linux server instance on Amazon Lightsail_
 
 1. Login to _[Amazon Lightsail](https://lightsail.aws.amazon.com/)_. If you don't have an Amazon Web Services account, create one
+
 1. Create an instance (server running in amazon data centers)
+
     a. Select the instance location (region)
     b. Pick Linux/Unix platform
     c. Select OS Only on the blueprint and then Ubuntu 16.04LTS
@@ -19,6 +21,7 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
 ### _SSH into your server_
 
 1. Copy the private key downloaded on step 2.d. of the previous section to the .ssh/ directory under the default user's home directory and modify default permissions
+
     a. Change to user's home directory 
     ```
     # cd ~ 
@@ -41,7 +44,8 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
     # chmod 600 .ssh/aws-key
     ```
     
-1. SSH Access to your lightsail instance
+1. SSH Access to your lightsail 
+
     a. Find the public IP Address of the instance
     b. Connect to the instance using the default username 
     ``` 
@@ -53,14 +57,16 @@ In this tutorial we're going to configure a baseline installation of Ubuntu serv
     ```  
     # more /etc/ssh/sshd_config |grep 'PasswordAuthentication '
     ```
+
     If the output is different than ```PasswordAuthentication no ```, then edit /etc/ssh/sshd_config and change it and restart the sshd daemon ``` # service sshd restart ```.
 
 ### _System updates and upgrade_
+
 1. Update the package source list
     ```
     # sudo apt-get update
     ```
-2. Upgrade your system
+1. Upgrade your system
     ```
     # sudo apt-get upgrade
     ```
@@ -100,6 +106,7 @@ Enforce the least privelege principle by opening only the required ports.
     ```
     # sudo ufw allow 123/udp
     ```
+
 1. On your lightsail instance page go to manage, networking, scroll down to firewall, and make sure that NTP(123/udp), SSH(22/tcp), custom ssh(2200/tcp), HTTP(80/tcp), and HTTPS(443/tcp) are allowed
     
 1. To check the rules added before enabling ufw run
@@ -114,76 +121,103 @@ Enforce the least privelege principle by opening only the required ports.
     # sudo ufw enable
     ```
 
-#### _The Secure way to change the SSH port_
+### _The Secure way to change the SSH port_
 
 1. Edit /etc/ssh/sshd_config with nano or vi
+
 1. Duplicate the Port paramemter and change the port of the second one to 2200
     ``` 
     Port 22
     Port 2200
     ```
+
 1. Restart the ssh service to apply the changes
+
     ```
     $ sudo systemctl restart ssh.service
     ```
+
 1. At this point you should be able to ssh using the standard and new configured port
+
     ```
     $ ssh ubuntu@<ip_address> -i .ssh/aws-key -p 2200
     ```
+
 1. Delete the standard ssh port rule 
+
     ```
     $ sudo ufw delete allow 22/tcp
     ```
+
 1. Comment the ```Port 22``` parameter in /etc/ssh/sshd_config
+
 1. Restart the ssh service to apply the changes
+
     ```
     $ sudo systemctl restart ssh.service
     ```
+
 1. On your lightsail instance page go to manage, networking, scroll down to firewall, edit rules, click on the X next to port 22, and save.
 
 ### _Configure Time Zone and NTP Synchronization_
 
 1. Display the current time, date, and time zone
+
     ```
     $ timedatectl status
     ```
 
 1. Set time zone to UTC
+
     ```
     $ timedatectl set-timezone UTC
     ```
 
 1. Install ntp package
+
     ```
     # sudo apt-get install ntp
     ```
+
 1. Edit /etc/ntp.conf, delete existing ubuntu's pool entries, and add amazon's ntp address as the preferred source and google's as a fallback
+
     ```
     server 169.254.169.123 prefer iburst
     server time.google.com iburst
     ```
+
 1. Restart the NTP daemon
+
     ```
     # sudo service ntp restart
     ```
+
 1. Check the synchronization status
+
     ```
     # ntpq -p
     ```
     
 ### _PostgreSQL_
+
 1. Installation of PostgreSQL
+
     ```
     # sudo apt-get install postgresql
     ```
+
 1. Check if postgresql process is running
+
     ```
     $ ps aux|grep postgre
     ```
+
 1. PostgreSQL doesn't allow remote connections by default. However, it is     recommended to double-check the `/etc/postgresql/<version>/main/pg_hba.conf` file.
 
 ### _Git_
+
 1. Check if git is installed
+
     ```
     $ dpkg -l | grep git
     ```
@@ -195,25 +229,32 @@ Enforce the least privelege principle by opening only the required ports.
     ```
 
 ### _Apache Web Server_
+
 1. Install the Apache Web Server
+
     ``` 
     # sudo apt-get install apache2
     ```
 
 1. Check if apache process is running
+
     ```
     $ ps aux|grep apache
     ```
     
 1. Install mod_wsgi to enable web server communication with the webapp
+
     ```
     $ sudo apt-get install libapache2-mod-wsgi
     ```
 1. Enable mod_wsgi
+
     ```
     # sudo a2enmod wsgi
     ```
+
 1. Test the WSGI module
+
     a. Edit ```/etc/apache2/sites-enabled/000-default.conf```
     b. Add ```WSGIScriptAlias / /var/www/html/myapp.wsgi``` right before the closing of ```</VirtualHost>```
     c. Create /var/www/html/myapp.wsgi and add this
@@ -232,8 +273,10 @@ Enforce the least privelege principle by opening only the required ports.
     e. Browse to ```http://<public_IP>``` and you will see "It Works!".
 
 1. To secure apache a little bit more, edit /etc/apache2/conf-enabled/security.conf with the following instructions to prevent
+
     a. Giving the OS information ```ServerSignature Off```
     b. Direct access to .sql, .git, .json, .md files
+
     ```
     <DirectoryMatch "/\.git">
         Require all denied
@@ -256,7 +299,9 @@ Enforce the least privelege principle by opening only the required ports.
     Header set X-Content-Type-Options: "nosniff"
     Header set X-Frame-Options: "sameorigin"
     ```
+
 1. Edit /etc/apache2/apache2.conf to disable Directory Browsing
+
     ```
     <Directory /var/www/>
         Options -Indexes
@@ -278,10 +323,13 @@ Enforce the least privelege principle by opening only the required ports.
         Require all denied 
     </Directory>
     ```
+
 1. Enable mod_headers
+
     ```
     # sudo a2enmod headers
     ```
+
 1. Restart Apache
     ```
     # sudo service apache2 restart
@@ -290,15 +338,20 @@ Enforce the least privelege principle by opening only the required ports.
 ### Create the SSL/TLS certificate
 
 Lets create a free certificate from letsencrypt.org.
+
 1. Install certbot to fetch a certificate from Let's Encrypt
+
     ```
     $ sudo apt-get install software-properties-common
     $ sudo add-apt-repository ppa:certbot/certbot
     $ sudo apt-get update
     $ sudo apt-get install python-certbot-apache 
     ```
+
 1. Create the (A) record on your DNS hosting provider; itemcatalog.wo984c.net will be used on this example
+
 1. Configure the virtual host for itemcatalog.wo984c.net by adding the following lines to /etc/apache2/sites-available/itemCatalog.conf, remember to use sudo
+
     ```
     <VirtualHost *:80>
         ServerName itemcatalog.wo984c.net
@@ -310,11 +363,14 @@ Lets create a free certificate from letsencrypt.org.
     </VirtualHost>
     ```
 1. Enable itemCatalog site and restart apache
+
     ```
     # sudo a2ensite itemCatalog
     # sudo service apache2 restart
     ```    
+
 1. Create the LetsEncrypt free certificate
+
     ```
     # sudo certbot --apache
     ```
@@ -323,43 +379,61 @@ Lets create a free certificate from letsencrypt.org.
 1. Go to https://itemcatalog.wo984c.net to test the secure site.
 
 ### _Prepare the environment to host our Flask Web App_
+
 1. Install the package management system that will be used to install and manage software packages written in Python
+
     ```
     # sudo apt-get install python-pip
     ```
+
 1. Virtual Environment will be used to keep the application and its dependencies isolated from the main system
+
     ```
     # sudo -H pip install virtualenv
     ```
+
 1. Create the applications folders. In this case, the folder will be created in /var/www/html/
+
     ```
     # sudo mkdir /var/www/html/apps
     ```
+
 1. Clone the Item Catalog web app from GitHub
+
     ```
     # cd /var/www/html/
     # sudo chown -R ubuntu apps/
     # sudo chgrp -R ubuntu apps/
     # git clone https://github.com/wo984c/itemCatalog.git
     ```
+
 1. Change dir to itemCatalog and create the virtual environment for the itemCatalog project
+
     ```
     # cd itemCatalog/
     # virtualenv venv
     ```
+
 1. Activate the virtual environment for the itemCatalog project
+
     ```
     # source venv/bin/activate
     ```
+
 1. Install the python packages required by the Item Catalog Flask app
+
     ```
     (venv)# pip install Flask flask-sqlalchemy oauth2client psycopg2-binary Flask-HTTPAuth html5lib urllib3 requests redis pyparsing passlib packaging
     ```
+
 1. Deactivate the virtual environment and go back to the system’s default Python interpreter with all its installed libraries
+
     ```
     (venv)# deactivate
     ```
+
 1. Create the wsgi file used by apache to serve the Item Catalog flask app
+
     ```
     # cd ..
     # pwd
@@ -381,7 +455,9 @@ Lets create a free certificate from letsencrypt.org.
     from itemCatalog import app as application
     application.secret_key = '23d34f@34#$%^fgty***2'
     ```
+
 1. Edit the ssl version of the itemCatalog configuration in /etc/apache2/sites-available/, remember to use sudo
+
     ```
     <IfModule mod_ssl.c>
     <VirtualHost *:443>
@@ -432,6 +508,7 @@ Lets create a free certificate from letsencrypt.org.
     ```
 
 1. Required Modifications to original code
+
     a. Oauth parameters in ``` handlers/online_oauth.py ```
     ```
     CLIENT_ID = json.loads(
@@ -468,13 +545,17 @@ Lets create a free certificate from letsencrypt.org.
     ```
     from .helpers import *
     ```
+
 1. Change owner and group of /var/www/html/apps to www-data
+
     ```
     # cd /var/www/html
     # sudo chown -R www-data apps/
     # sudo chgrp -R www-data apps/
     ```
+
 1. Restart Apache Web Server
+
     ```
     # sudo service apache2 restart
     ```
@@ -482,6 +563,7 @@ Lets create a free certificate from letsencrypt.org.
 ### _Give grader SSH Access_
 
 1. Generate SSH Key Pair for grader on the client system
+
     ```
     # cd ~
     # mkdir grader_keys
@@ -490,12 +572,14 @@ Lets create a free certificate from letsencrypt.org.
     Enter and re-enter a passphrase when prompted.
 
 1. Create grader user in the lightsail instance
+
     ```
     $ sudo adduser grader --disabled-password
     ```
     Enter the information requested (Full name, phone, etc) and answer Y to _Is the information correct? [Y/n]_
 
 1. To check if user has been created correctlly 
+
     ```
     $ finger grader 
     ```
@@ -505,22 +589,27 @@ Lets create a free certificate from letsencrypt.org.
     ```
 
 1. Change directory to grader's home and create the .ssh directory. This directory will be used to store the public key file
+
     ```
     # sudo su -
     # cd ~grader
     # mkdir .ssh
     # chmod 700 .ssh/
     ```
+
 1. Now copy the content of ~/grader_keys/key.pub file on the client and paste it to /home/grader/.ssh/authorized_keys on the server.
 
 1. Make sure that authorized_keys file is owned by user/group grader and permissions are set to -rw-------
+
     ```
     # chmod 600 authorized_keys
     # cd ..
     # chown -R grader .ssh/
     # chgrp -R grader .ssh/
     ```
+
 1. Give Sudo Access to grader
+
     ```
     $ visudo -f /etc/sudoers.d/udacity-grader
     ```
@@ -528,4 +617,5 @@ Lets create a free certificate from letsencrypt.org.
     ```
     grader  ALL=(ALL)   NOPASSWD:ALL
     ```
+
 1. Finally, share the private key located in the client's ~/grader_keys/ dir with the Udacity's grader.
