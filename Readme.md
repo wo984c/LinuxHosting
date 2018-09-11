@@ -605,19 +605,21 @@ Lets create a free certificate from letsencrypt.org.
 
 1. Data Base Setup
 
-_Change user to postgres, create the data base, and db user_
+    Change user to postgres, create the data base, and db user
 
 
     ```
     # sudo su - postgres
-    # cd /vagrant/itemCatalog
+    # cd /var/www/html/apps/itemCatalog
     # psql
+    
     postgres=# \i dbinit.sql;
     postgres=# \q;
-    postgres@vagrant:~$ exit
+    
+    # exit
     ```
 
-_Setup the db schema_ 
+    Setup the db schema 
 
     ```
     # python create_db_schema.py 
